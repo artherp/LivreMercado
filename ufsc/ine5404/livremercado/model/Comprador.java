@@ -10,37 +10,33 @@ package ufsc.ine5404.livremercado.model;
  */
 public class Comprador extends Pessoa {
     private Carrinho carrinho;
-    
+
     public Comprador(String nome) {
         super(nome);
         carrinho = new Carrinho();
-}
-    
+    }
+
     public void adicioneAoCarrinho(Produto produto, Vendedor vendedor, int quantidade) {
         carrinho.adicioneItem(produto, vendedor, quantidade);
     }
-    
+
     public void efetuarCompra() {
         for (ItemCompra item : carrinho.getItens()) {
             Produto produto = item.getProduto();
             Vendedor vendedor = item.getVendedor();
             int quantidade = item.getQuantidade();
-            
+
             try {
                 vendedor.getEstoque().reduzaQuantidade(produto, quantidade);
                 item.setQuantidade(0);
-            } catch (IllegalArgumentException e) {}
-            
-        }
-        
-        for(ItemCompra itensRemover : carrinho.getItens()) {
-            if(itensRemover.getQuantidade() == 0) {
-                carrinho.removaItem(itensRemover.getProduto());
+            } catch (IllegalArgumentException e) {
             }
+
         }
-        
+
+        carrinho.getItens().removeIf(item -> item.getQuantidade() == 0);
+
     }
-     
 
     /**
      * @return the carrinho
@@ -48,6 +44,5 @@ public class Comprador extends Pessoa {
     public Carrinho getCarrinho() {
         return carrinho;
     }
-    
-    
+
 }
