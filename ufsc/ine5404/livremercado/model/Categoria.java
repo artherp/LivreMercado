@@ -25,51 +25,53 @@ public class Categoria {
     public ArrayList<Categoria> getSubcategorias() {
         return subcategorias;
     }
+
     private String nome;
     private ArrayList<Produto> produtos;
     private ArrayList<Categoria> subcategorias;
-    
+
     public Categoria(String nome) {
         this.nome = nome;
         produtos = new ArrayList<>();
         subcategorias = new ArrayList<>();
     }
-    
+
     public void adicioneProduto(Produto produto) {
-        if(!produtos.contains(produto)) {
+        if (!produtos.contains(produto)) {
             produtos.add(produto);
-            if(!produto.getCategoria().produtos.equals(produto)) {
-                produto.getCategoria().produtos.remove(produto);
+            if (!produto.getCategoria().equals(this)) {
                 produto.setCategoria(this);
+                produto.getCategoria().produtos.remove(produto);
             }
         }
+
     }
-    
+
     public void adicioneSubcategoria(Categoria subcategoria) {
-        if(!subcategorias.contains(subcategoria)) {
+        if (!subcategorias.contains(subcategoria)) {
             subcategorias.add(subcategoria);
         }
     }
-    
-    public void removaSubcategoria(Categoria subcategoria, boolean permanente) {
-        if(!subcategorias.contains(subcategoria)) {
-            throw new IllegalArgumentException();
-        }
-        
-        if(!permanente) {
-            subcategorias.remove(subcategoria);
-        } else {
-            for(Produto produto : subcategoria.produtos) {
+
+    public void removaSubcategoria(Categoria subcategoria, boolean permanente) throws IllegalArgumentException {
+        if (permanente) {
+            for (Produto produto : subcategoria.produtos) {
                 produtos.add(produto);
                 produto.setCategoria(this);
             }
             subcategoria.produtos.clear();
-            
-            subcategorias.addAll(subcategoria.subcategorias);
+            for (Categoria subRem : subcategoria.subcategorias) {
+                subcategorias.add(subRem);
+            }
             subcategoria.subcategorias.clear();
         }
-        
+        subcategorias.remove(subcategoria);
     }
-    
-    
+
+    /**
+     * @return the nome
+     */
+    public String getNome() {
+        return nome;
+    }
 }
